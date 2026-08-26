@@ -25,7 +25,6 @@
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
-  html{ scroll-behavior:auto; }
 
   body{
     background:var(--black);
@@ -107,13 +106,11 @@
   .scrim{ position:fixed; inset:0; background:transparent; z-index:98; opacity:0; pointer-events:none; }
   .scrim.open{ pointer-events:auto; }
 
-  /* ---------- PAGE SWITCHING ---------- */
-  .page{ display:none; opacity:1; }
-  .page.active{ display:block; }
-  .hero.page.active{ display:flex; }
-  section.page, footer.page{ min-height:100svh; display:flex; flex-direction:column; justify-content:center; }
-  .page.active{ transition:opacity 0.28s ease; }
-  .page.fade-out{ opacity:0 !important; }
+  /* ---------- CONTINUOUS SCROLL LAYOUT ---------- */
+  html{ scroll-behavior:smooth; }
+  .page{ display:block; scroll-margin-top:76px; }
+  .hero.page{ display:flex; }
+  footer.page{ display:flex; flex-direction:column; justify-content:center; }
 
   /* ---------- HERO ---------- */
 
@@ -181,8 +178,8 @@
   /* ---------- PLUGINS ---------- */
 
   #plugins{ background:var(--black-soft); border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline); }
-  #booking{ background:var(--black); }
-  #services{ background:var(--black-soft); border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline); }
+  #services{ background:var(--black); }
+  #booking{ background:var(--black-soft); }
   .plugin-grid{ max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:1px; background:var(--hairline); }
   @media(min-width:820px){ .plugin-grid{ grid-template-columns:1fr 1fr; } }
   .plugin-card{ background:var(--black-soft); padding:52px 44px; position:relative; transition:background 0.4s ease; }
@@ -702,42 +699,16 @@
   menuToggle.addEventListener('click', toggleMenu);
   scrim.addEventListener('click', closeMenu);
 
-  // page routing
+  // navigation — everything lives on one continuous scrolling page now,
+  // so "going" anywhere just means smooth-scrolling up or down to it.
   const pages = Array.from(document.querySelectorAll('.page'));
   const validIds = pages.map(p => p.id);
 
-  function showPage(id){
-    if(!validIds.includes(id)) id = 'home';
-    const current = document.querySelector('.page.active');
-
-    if(current && current.id === id){
-      window.scrollTo({ top:0, behavior:'smooth' });
-      return;
-    }
-
-    function finishSwap(){
-      pages.forEach(p => {
-        p.classList.toggle('active', p.id === id);
-        p.classList.remove('fade-out');
-      });
-      window.scrollTo({ top:0, behavior:'instant' });
-      header.classList.toggle('scrolled', false);
-      const next = document.getElementById(id);
-      if(next){
-        next.classList.add('fade-out');
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => { next.classList.remove('fade-out'); });
-        });
-      }
-      if(location.hash !== '#' + id){ history.pushState(null, '', '#' + id); }
-    }
-
-    if(current){
-      current.classList.add('fade-out');
-      setTimeout(finishSwap, 220);
-    } else {
-      finishSwap();
-    }
+  function goToSection(id){
+    const target = document.getElementById(id);
+    if(!target) return;
+    target.scrollIntoView({ behavior:'smooth', block:'start' });
+    if(location.hash !== '#' + id){ history.replaceState(null, '', '#' + id); }
   }
 
   document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -746,25 +717,26 @@
     a.addEventListener('click', (e) => {
       e.preventDefault();
       closeMenu();
-      showPage(target);
+      goToSection(target);
     });
-  });
-
-  window.addEventListener('popstate', () => {
-    showPage(location.hash.slice(1) || 'home');
   });
 
   document.querySelector('.brand').addEventListener('click', (e) => {
     e.preventDefault();
     closeMenu();
-    showPage('home');
+    goToSection('home');
   });
 
-  // initial load — set instantly, no fade (avoids flashing through the hero
-  // first if someone opens a direct link like #booking)
+  // land on the right section if opening a direct link like #booking —
+  // jump instantly on load rather than animating from the very top
   (function initialLoad(){
-    const id = validIds.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home';
-    pages.forEach(p => p.classList.toggle('active', p.id === id));
+    const id = location.hash.slice(1);
+    if(validIds.includes(id) && id !== 'home'){
+      requestAnimationFrame(() => {
+        const target = document.getElementById(id);
+        if(target) target.scrollIntoView({ behavior:'instant', block:'start' });
+      });
+    }
   })();
 
   // ---------- booking calculator ----------
@@ -997,18 +969,18 @@
   (function handleReturnFromStripe(){
     const params = new URLSearchParams(window.location.search);
     if(params.get('booking') === 'success'){
-      showPage('booking');
+      goToSection('booking');
       if(bookingError){
         bookingError.style.color = 'var(--white-bright)';
         bookingError.textContent = 'Deposit received! Check your email for your booking confirmation and balance payment link.';
       }
     } else if(params.get('booking') === 'cancelled'){
-      showPage('booking');
+      goToSection('booking');
       if(bookingError){
         bookingError.textContent = 'Payment was cancelled \u2014 your time slot was not reserved.';
       }
     } else if(params.get('balance') === 'paid'){
-      showPage('contact');
+      goToSection('contact');
     }
   })();
 </script>
