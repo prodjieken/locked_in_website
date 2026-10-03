@@ -198,10 +198,7 @@
   .plugin-card-photo{
     width:100%; aspect-ratio:16/9; border:1px dashed var(--hairline); display:flex; align-items:center; justify-content:center;
     color:var(--white-dim); font-size:0.64rem; letter-spacing:0.14em; text-transform:uppercase; margin-top:14px; background:rgba(255,255,255,0.02);
-    overflow:hidden;
   }
-  .plugin-card-photo.has-photo{ border-style:solid; padding:0; }
-  .plugin-card-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
   .plugin-formats{ margin-top:14px; display:flex; gap:7px; flex-wrap:wrap; }
   .plugin-formats span{ font-size:0.62rem; letter-spacing:0.12em; color:var(--bone-dim); border:1px solid var(--hairline); padding:4px 10px; }
   .plugin-status{ margin-top:16px; font-size:0.68rem; letter-spacing:0.13em; color:var(--white-dim); display:flex; align-items:center; gap:8px; }
@@ -215,8 +212,8 @@
   }
   .plugin-modal-scrim.open{ opacity:1; pointer-events:auto; }
   .plugin-modal{
-    position:fixed; top:50%; left:50%; transform:translate(-50%,-47%); width:min(600px,90vw);
-    max-height:86svh; overflow-y:auto; background:var(--black-soft); border:1px solid var(--hairline);
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-47%); width:min(760px,94vw);
+    max-height:92svh; overflow-y:auto; background:var(--black-soft); border:1px solid var(--hairline);
     box-shadow:0 30px 70px rgba(0,0,0,0.6); z-index:199; padding:clamp(28px,4.5vw,42px);
     opacity:0; pointer-events:none; transition:opacity 0.3s ease, transform 0.3s ease;
   }
@@ -233,22 +230,18 @@
     width:100%; aspect-ratio:16/9; border:1px dashed var(--hairline); display:flex; align-items:center; justify-content:center;
     color:var(--white-dim); font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; margin:16px 0 18px; background:rgba(255,255,255,0.02);
   }
-  .plugin-modal-photo.has-photo{ border-style:solid; padding:0; position:relative; overflow:hidden; }
-  .plugin-modal-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .plugin-modal-gallery-nav{
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between; padding:0 8px; pointer-events:none;
+  .plugin-modal-photo.has-photo{
+    aspect-ratio:auto; height:min(52svh,480px); border-style:solid; padding:0; background:#000;
   }
-  .plugin-modal-gallery-btn{
-    pointer-events:auto; background:rgba(10,9,8,0.55); border:1px solid var(--hairline); color:var(--bone);
-    width:30px; height:30px; cursor:pointer; font-size:0.9rem; line-height:1; transition:border-color 0.2s ease, color 0.2s ease;
+  .plugin-modal-photo img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .plugin-modal-gallery-dots{ display:flex; justify-content:center; gap:7px; margin-top:12px; }
+  .plugin-modal-gallery-dot{
+    width:7px; height:7px; border-radius:50%; background:var(--hairline); cursor:pointer; transition:background 0.25s ease, transform 0.25s ease;
   }
-  .plugin-modal-gallery-btn:hover{ border-color:var(--white); color:var(--white-bright); }
-  .plugin-modal-gallery-count{
-    position:absolute; bottom:8px; right:10px; font-size:0.6rem; letter-spacing:0.1em; color:var(--white-dim);
-    background:rgba(10,9,8,0.55); padding:3px 7px;
-  }
+  .plugin-modal-gallery-dot.active{ background:var(--white); transform:scale(1.25); }
   .plugin-modal-inner h3{ font-size:clamp(1.6rem,3.4vw,2.1rem); }
   .plugin-modal-inner p{ font-size:0.92rem; line-height:1.7; }
+  .plugin-modal-buy{ margin-top:20px; width:100%; text-align:center; display:block; }
   .plugin-modal-devnotice{
     position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:0 34px; gap:12px;
@@ -301,8 +294,8 @@
   #studios{
     background:var(--black-soft); border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline);
     padding-top:clamp(56px,9svh,88px); padding-bottom:clamp(16px,3svh,32px); min-height:100svh;
-    display:flex; flex-direction:column;
   }
+  #studios.page.active{ display:flex; flex-direction:column; }
   #studios .section-head{ margin-bottom:clamp(10px,2svh,18px); flex-shrink:0; }
 
   .studio-grid{ max-width:1200px; width:100%; margin:0 auto; flex:1; display:flex; flex-direction:column; gap:clamp(4px,1svh,10px); min-height:0; }
@@ -427,29 +420,17 @@
     </div>
   </div>
   <div class="plugin-grid" id="pluginGrid">
-    <div class="plugin-card" data-plugin="vocalift">
-      <span class="kind">Vocal Riser</span>
-      <h3>Vocalift</h3>
-      <p>Capture a phrase, stretch and reshape its pitch with formant preservation intact, and resolve it back into the mix as a rising, reversed swell. Built for the moment before the hook lands.</p>
-      <div class="plugin-card-photo">Photo coming soon</div>
-    </div>
-    <div class="plugin-card" data-plugin="parallax">
-      <span class="kind">Binaural Spatial Panner</span>
-      <h3>Parallax</h3>
-      <p>Place a source in three dimensions and hear it move. HRTF convolution, real-world propagation delay, air absorption, and per-source reverb, navigated through a free-orbit 3D view.</p>
-      <div class="plugin-card-photo">Photo coming soon</div>
-    </div>
     <div class="plugin-card" data-plugin="eli">
       <span class="kind">Saturator</span>
       <h3>Eli</h3>
       <p>A saturation plugin with a character at the wheel. Eli reaches for something different every time — each choice its own harmonic flavor, from warm and rounded to something a lot more volatile.</p>
-      <div class="plugin-card-photo has-photo"><img src="images/eli-idle.png" alt="Eli plugin interface" loading="lazy"></div>
+      <div class="plugin-card-photo">Photo coming soon</div>
     </div>
     <div class="plugin-card" data-plugin="midify">
       <span class="kind">Audio-to-MIDI</span>
       <h3>Midify</h3>
       <p>Drop in a stem, get MIDI back. Midify transcribes pitched, single-source audio — vocals, bass, leads — into clean, editable MIDI, so an idea caught as audio can keep moving as notes.</p>
-      <div class="plugin-card-photo has-photo"><img src="images/midify-ui.png" alt="Midify plugin interface" loading="lazy"></div>
+      <div class="plugin-card-photo">Photo coming soon</div>
     </div>
     <div class="plugin-empty" id="pluginEmpty">No plugins match your search.</div>
   </div>
@@ -965,14 +946,6 @@
     // In-development plugins reuse their own card markup as the blurred
     // backdrop; shipped plugins get a full write-up plus room for a photo.
     const PLUGIN_DETAILS = {
-      vocalift: {
-        inDevelopment: true,
-        devMessage: 'Vocalift is still in development — the formant engine and factory presets are being finished up. Reach out if you want early access.'
-      },
-      parallax: {
-        inDevelopment: true,
-        devMessage: 'Parallax is still in development — the free-orbit 3D view and HRTF engine are being finished up. Reach out if you want early access.'
-      },
       eli: {
         inDevelopment: false,
         kind: 'Saturator',
@@ -980,7 +953,8 @@
         description: 'A saturation plugin with a character at the wheel. Eli reaches for something different every time — each choice its own harmonic flavor, from warm and rounded to something a lot more volatile. Turn the dial and hear what he picks.',
         formats: ['VST3','AU','CLAP','macOS','Windows'],
         status: 'Available now — not available for Pro Tools (no AAX)',
-        photos: ['images/eli-idle.png','images/eli-cocaine.png','images/eli-alcohol.png','images/eli-weed.png']
+        photos: ['images/eli-idle.png','images/eli-cocaine.png','images/eli-alcohol.png','images/eli-weed.png'],
+        buyUrl: 'mailto:info@lockedinthestudio.com?subject=' + encodeURIComponent('Purchase Eli')
       },
       midify: {
         inDevelopment: false,
@@ -989,31 +963,41 @@
         description: 'Drop in a stem, get MIDI back. Midify transcribes pitched, single-source audio — vocals, bass, leads — into clean, editable MIDI, so an idea caught as audio can keep moving as notes. Built for stems and sketching, not full mixes or drums.',
         formats: ['VST3','AU','CLAP','macOS','Windows'],
         status: 'Available now — not available for Pro Tools (no AAX)',
-        photos: ['images/midify-ui.png']
+        photos: ['images/midify-ui.png'],
+        buyUrl: 'mailto:info@lockedinthestudio.com?subject=' + encodeURIComponent('Purchase Midify')
       }
     };
 
     let galleryPhotos = [];
     let galleryIndex = 0;
+    let galleryTimer = null;
 
     function renderGalleryFrame(){
       const img = modalInner.querySelector('.plugin-modal-gallery-img');
-      const count = modalInner.querySelector('.plugin-modal-gallery-count');
-      const prevBtn = modalInner.querySelector('.plugin-modal-gallery-prev');
-      const nextBtn = modalInner.querySelector('.plugin-modal-gallery-next');
+      const dots = modalInner.querySelectorAll('.plugin-modal-gallery-dot');
       if(!img) return;
       img.src = galleryPhotos[galleryIndex];
-      if(count) count.textContent = (galleryIndex + 1) + ' / ' + galleryPhotos.length;
-      const multi = galleryPhotos.length > 1;
-      if(prevBtn) prevBtn.style.display = multi ? '' : 'none';
-      if(nextBtn) nextBtn.style.display = multi ? '' : 'none';
-      if(count) count.style.display = multi ? '' : 'none';
+      dots.forEach(function(dot, i){ dot.classList.toggle('active', i === galleryIndex); });
+    }
+
+    function stopGalleryAutoplay(){
+      if(galleryTimer){ clearInterval(galleryTimer); galleryTimer = null; }
+    }
+
+    function startGalleryAutoplay(){
+      stopGalleryAutoplay();
+      if(galleryPhotos.length <= 1) return;
+      galleryTimer = setInterval(function(){
+        galleryIndex = (galleryIndex + 1) % galleryPhotos.length;
+        renderGalleryFrame();
+      }, 2600);
     }
 
     function openModal(id){
       const card = document.querySelector('.plugin-card[data-plugin="' + id + '"]');
       const detail = PLUGIN_DETAILS[id];
       if(!card || !detail) return;
+      stopGalleryAutoplay();
 
       if(detail.inDevelopment){
         modalInner.innerHTML = card.innerHTML;
@@ -1025,38 +1009,38 @@
         devNotice.hidden = true;
         modalInner.classList.remove('is-blurred');
         const hasPhotos = detail.photos && detail.photos.length > 0;
+        const multi = hasPhotos && detail.photos.length > 1;
         modalInner.innerHTML =
           '<span class="kind">' + detail.kind + '</span>' +
           '<h3>' + detail.name + '</h3>' +
           (hasPhotos ?
             '<div class="plugin-modal-photo has-photo">' +
               '<img class="plugin-modal-gallery-img" alt="' + detail.name + ' screenshot">' +
-              '<div class="plugin-modal-gallery-nav">' +
-                '<button type="button" class="plugin-modal-gallery-btn plugin-modal-gallery-prev" aria-label="Previous photo">&lsaquo;</button>' +
-                '<button type="button" class="plugin-modal-gallery-btn plugin-modal-gallery-next" aria-label="Next photo">&rsaquo;</button>' +
-              '</div>' +
-              '<div class="plugin-modal-gallery-count"></div>' +
-            '</div>'
+            '</div>' +
+            (multi ?
+              '<div class="plugin-modal-gallery-dots">' +
+                detail.photos.map(function(_, i){ return '<span class="plugin-modal-gallery-dot" data-i="' + i + '"></span>'; }).join('') +
+              '</div>'
+              : '')
             : '<div class="plugin-modal-photo">Photo coming soon</div>') +
           '<p>' + detail.description + '</p>' +
           '<div class="plugin-formats">' + detail.formats.map(function(f){ return '<span>' + f + '</span>'; }).join('') + '</div>' +
-          '<div class="plugin-status">' + detail.status + '</div>';
+          '<div class="plugin-status">' + detail.status + '</div>' +
+          '<a href="' + detail.buyUrl + '" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</a>';
 
         if(hasPhotos){
           galleryPhotos = detail.photos;
           galleryIndex = 0;
           renderGalleryFrame();
-          const prevBtn = modalInner.querySelector('.plugin-modal-gallery-prev');
-          const nextBtn = modalInner.querySelector('.plugin-modal-gallery-next');
-          if(prevBtn) prevBtn.addEventListener('click', function(e){
-            e.stopPropagation();
-            galleryIndex = (galleryIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
-            renderGalleryFrame();
-          });
-          if(nextBtn) nextBtn.addEventListener('click', function(e){
-            e.stopPropagation();
-            galleryIndex = (galleryIndex + 1) % galleryPhotos.length;
-            renderGalleryFrame();
+          startGalleryAutoplay();
+          const dots = Array.prototype.slice.call(modalInner.querySelectorAll('.plugin-modal-gallery-dot'));
+          dots.forEach(function(dot){
+            dot.addEventListener('click', function(e){
+              e.stopPropagation();
+              galleryIndex = parseInt(dot.getAttribute('data-i'), 10) || 0;
+              renderGalleryFrame();
+              startGalleryAutoplay();
+            });
           });
         }
       }
@@ -1068,6 +1052,7 @@
     }
 
     function closeModal(){
+      stopGalleryAutoplay();
       modalScrim.classList.remove('open');
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden', 'true');
