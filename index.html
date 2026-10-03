@@ -195,14 +195,8 @@
   .plugin-card h3{ font-family:var(--serif); font-size:clamp(1.3rem,2.6vw,1.65rem); margin:12px 0 4px; color:var(--bone); }
   .plugin-card .kind{ font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--white); margin-bottom:10px; display:block; }
   .plugin-card p{ color:var(--bone-dim); line-height:1.5; font-size:0.84rem; }
-  .plugin-card-photo{
-    width:100%; aspect-ratio:16/9; border:1px dashed var(--hairline); display:flex; align-items:center; justify-content:center;
-    color:var(--white-dim); font-size:0.64rem; letter-spacing:0.14em; text-transform:uppercase; margin-top:14px; background:rgba(255,255,255,0.02);
-  }
   .plugin-formats{ margin-top:14px; display:flex; gap:7px; flex-wrap:wrap; }
   .plugin-formats span{ font-size:0.62rem; letter-spacing:0.12em; color:var(--bone-dim); border:1px solid var(--hairline); padding:4px 10px; }
-  .plugin-status{ margin-top:16px; font-size:0.68rem; letter-spacing:0.13em; color:var(--white-dim); display:flex; align-items:center; gap:8px; }
-  .plugin-status::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--white-dim); flex-shrink:0; }
   .plugin-empty{ display:none; grid-column:1/-1; background:var(--black-soft); text-align:center; color:var(--white-dim); font-size:0.84rem; padding:40px 20px; }
 
   /* ---------- PLUGIN DETAIL MODAL ---------- */
@@ -226,14 +220,20 @@
   .plugin-modal-inner{ transition:filter 0.3s ease, opacity 0.3s ease; }
   .plugin-modal-inner.is-blurred{ filter:blur(7px); opacity:0.45; pointer-events:none; user-select:none; min-height:300px; }
   .plugin-modal-inner .kind{ margin-top:0; }
-  .plugin-modal-photo{
-    width:100%; aspect-ratio:16/9; border:1px dashed var(--hairline); display:flex; align-items:center; justify-content:center;
-    color:var(--white-dim); font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; margin:16px 0 18px; background:rgba(255,255,255,0.02);
+  .plugin-modal-gallery{
+    width:100%; margin:16px 0 18px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
   }
-  .plugin-modal-photo.has-photo{
-    aspect-ratio:auto; height:min(52svh,480px); border-style:solid; padding:0; background:#000;
+  .plugin-modal-gallery-img{
+    display:block; max-width:100%; max-height:min(52svh,480px); width:auto; height:auto;
+    transition:transform 0.35s ease, opacity 0.35s ease;
   }
-  .plugin-modal-photo img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .plugin-modal-gallery-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); background:rgba(10,9,8,0.6); border:1px solid var(--hairline); color:var(--bone);
+    width:32px; height:32px; cursor:pointer; font-size:1rem; line-height:1; z-index:1; transition:border-color 0.2s ease, color 0.2s ease;
+  }
+  .plugin-modal-gallery-arrow:hover{ border-color:var(--white); color:var(--white-bright); }
+  .plugin-modal-gallery-prev{ left:6px; }
+  .plugin-modal-gallery-next{ right:6px; }
   .plugin-modal-gallery-dots{ display:flex; justify-content:center; gap:7px; margin-top:12px; }
   .plugin-modal-gallery-dot{
     width:7px; height:7px; border-radius:50%; background:var(--hairline); cursor:pointer; transition:background 0.25s ease, transform 0.25s ease;
@@ -241,7 +241,11 @@
   .plugin-modal-gallery-dot.active{ background:var(--white); transform:scale(1.25); }
   .plugin-modal-inner h3{ font-size:clamp(1.6rem,3.4vw,2.1rem); }
   .plugin-modal-inner p{ font-size:0.92rem; line-height:1.7; }
-  .plugin-modal-buy{ margin-top:20px; width:100%; text-align:center; display:block; }
+  .plugin-modal-footer{
+    margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .plugin-modal-footer .plugin-formats{ margin-top:0; }
+  .plugin-modal-buy{ width:auto; white-space:nowrap; padding:10px 24px; }
   .plugin-modal-devnotice{
     position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:0 34px; gap:12px;
@@ -424,13 +428,11 @@
       <span class="kind">Saturator</span>
       <h3>Eli</h3>
       <p>A saturation plugin with a character at the wheel. Eli reaches for something different every time — each choice its own harmonic flavor, from warm and rounded to something a lot more volatile.</p>
-      <div class="plugin-card-photo">Photo coming soon</div>
     </div>
     <div class="plugin-card" data-plugin="midify">
       <span class="kind">Audio-to-MIDI</span>
       <h3>Midify</h3>
       <p>Drop in a stem, get MIDI back. Midify transcribes pitched, single-source audio — vocals, bass, leads — into clean, editable MIDI, so an idea caught as audio can keep moving as notes.</p>
-      <div class="plugin-card-photo">Photo coming soon</div>
     </div>
     <div class="plugin-empty" id="pluginEmpty">No plugins match your search.</div>
   </div>
@@ -952,7 +954,6 @@
         name: 'Eli',
         description: 'A saturation plugin with a character at the wheel. Eli reaches for something different every time — each choice its own harmonic flavor, from warm and rounded to something a lot more volatile. Turn the dial and hear what he picks.',
         formats: ['VST3','AU','CLAP','macOS','Windows'],
-        status: 'Available now — not available for Pro Tools (no AAX)',
         photos: ['images/eli-idle.png','images/eli-cocaine.png','images/eli-alcohol.png','images/eli-weed.png'],
         buyUrl: 'mailto:info@lockedinthestudio.com?subject=' + encodeURIComponent('Purchase Eli')
       },
@@ -962,7 +963,6 @@
         name: 'Midify',
         description: 'Drop in a stem, get MIDI back. Midify transcribes pitched, single-source audio — vocals, bass, leads — into clean, editable MIDI, so an idea caught as audio can keep moving as notes. Built for stems and sketching, not full mixes or drums.',
         formats: ['VST3','AU','CLAP','macOS','Windows'],
-        status: 'Available now — not available for Pro Tools (no AAX)',
         photos: ['images/midify-ui.png'],
         buyUrl: 'mailto:info@lockedinthestudio.com?subject=' + encodeURIComponent('Purchase Midify')
       }
@@ -972,11 +972,20 @@
     let galleryIndex = 0;
     let galleryTimer = null;
 
-    function renderGalleryFrame(){
+    function renderGalleryFrame(direction){
       const img = modalInner.querySelector('.plugin-modal-gallery-img');
       const dots = modalInner.querySelectorAll('.plugin-modal-gallery-dot');
       if(!img) return;
+      if(direction){
+        img.style.transition = 'none';
+        img.style.opacity = '0';
+        img.style.transform = 'translateX(' + (direction * 18) + 'px)';
+        void img.offsetWidth;
+        img.style.transition = 'transform 0.35s ease, opacity 0.35s ease';
+      }
       img.src = galleryPhotos[galleryIndex];
+      img.style.opacity = '1';
+      img.style.transform = 'translateX(0)';
       dots.forEach(function(dot, i){ dot.classList.toggle('active', i === galleryIndex); });
     }
 
@@ -989,8 +998,8 @@
       if(galleryPhotos.length <= 1) return;
       galleryTimer = setInterval(function(){
         galleryIndex = (galleryIndex + 1) % galleryPhotos.length;
-        renderGalleryFrame();
-      }, 2600);
+        renderGalleryFrame(1);
+      }, 3200);
     }
 
     function openModal(id){
@@ -1014,31 +1023,50 @@
           '<span class="kind">' + detail.kind + '</span>' +
           '<h3>' + detail.name + '</h3>' +
           (hasPhotos ?
-            '<div class="plugin-modal-photo has-photo">' +
+            '<div class="plugin-modal-gallery">' +
+              (multi ? '<button type="button" class="plugin-modal-gallery-arrow plugin-modal-gallery-prev" aria-label="Previous photo">&lsaquo;</button>' : '') +
               '<img class="plugin-modal-gallery-img" alt="' + detail.name + ' screenshot">' +
+              (multi ? '<button type="button" class="plugin-modal-gallery-arrow plugin-modal-gallery-next" aria-label="Next photo">&rsaquo;</button>' : '') +
             '</div>' +
             (multi ?
               '<div class="plugin-modal-gallery-dots">' +
                 detail.photos.map(function(_, i){ return '<span class="plugin-modal-gallery-dot" data-i="' + i + '"></span>'; }).join('') +
               '</div>'
               : '')
-            : '<div class="plugin-modal-photo">Photo coming soon</div>') +
+            : '') +
           '<p>' + detail.description + '</p>' +
-          '<div class="plugin-formats">' + detail.formats.map(function(f){ return '<span>' + f + '</span>'; }).join('') + '</div>' +
-          '<div class="plugin-status">' + detail.status + '</div>' +
-          '<a href="' + detail.buyUrl + '" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</a>';
+          '<div class="plugin-modal-footer">' +
+            '<div class="plugin-formats">' + detail.formats.map(function(f){ return '<span>' + f + '</span>'; }).join('') + '</div>' +
+            '<a href="' + detail.buyUrl + '" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</a>' +
+          '</div>';
 
         if(hasPhotos){
           galleryPhotos = detail.photos;
           galleryIndex = 0;
           renderGalleryFrame();
           startGalleryAutoplay();
+          const prevBtn = modalInner.querySelector('.plugin-modal-gallery-prev');
+          const nextBtn = modalInner.querySelector('.plugin-modal-gallery-next');
+          if(prevBtn) prevBtn.addEventListener('click', function(e){
+            e.stopPropagation();
+            galleryIndex = (galleryIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
+            renderGalleryFrame(-1);
+            startGalleryAutoplay();
+          });
+          if(nextBtn) nextBtn.addEventListener('click', function(e){
+            e.stopPropagation();
+            galleryIndex = (galleryIndex + 1) % galleryPhotos.length;
+            renderGalleryFrame(1);
+            startGalleryAutoplay();
+          });
           const dots = Array.prototype.slice.call(modalInner.querySelectorAll('.plugin-modal-gallery-dot'));
           dots.forEach(function(dot){
             dot.addEventListener('click', function(e){
               e.stopPropagation();
-              galleryIndex = parseInt(dot.getAttribute('data-i'), 10) || 0;
-              renderGalleryFrame();
+              const target = parseInt(dot.getAttribute('data-i'), 10) || 0;
+              const dir = target > galleryIndex ? 1 : -1;
+              galleryIndex = target;
+              renderGalleryFrame(dir);
               startGalleryAutoplay();
             });
           });
