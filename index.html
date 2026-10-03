@@ -192,7 +192,6 @@
   .plugin-card{ background:var(--black-soft); padding:clamp(20px,3.2vw,36px) clamp(18px,3vw,30px); position:relative; transition:background 0.4s ease; cursor:pointer; }
   .plugin-card:hover, .plugin-card:focus-visible{ background:#1c1c1c; }
   .plugin-card:focus-visible{ outline:1px solid var(--white-dim); outline-offset:-1px; }
-  .plugin-tag{ font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); border:1px solid var(--white-dim); padding:4px 10px; display:inline-block; }
   .plugin-card h3{ font-family:var(--serif); font-size:clamp(1.3rem,2.6vw,1.65rem); margin:12px 0 4px; color:var(--bone); }
   .plugin-card .kind{ font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--white); margin-bottom:10px; display:block; }
   .plugin-card p{ color:var(--bone-dim); line-height:1.5; font-size:0.84rem; }
@@ -222,7 +221,7 @@
   .plugin-modal-close:hover{ border-color:var(--white); color:var(--white-bright); }
   .plugin-modal-inner{ transition:filter 0.3s ease, opacity 0.3s ease; }
   .plugin-modal-inner.is-blurred{ filter:blur(7px); opacity:0.45; pointer-events:none; user-select:none; }
-  .plugin-modal-inner .plugin-tag{ margin-bottom:2px; }
+  .plugin-modal-inner .kind{ margin-top:0; }
   .plugin-modal-photo{
     width:100%; aspect-ratio:16/9; border:1px dashed var(--hairline); display:flex; align-items:center; justify-content:center;
     color:var(--white-dim); font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; margin:16px 0 18px; background:rgba(255,255,255,0.02);
@@ -233,6 +232,7 @@
     position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:0 34px; gap:12px;
   }
+  .plugin-modal-devnotice[hidden]{ display:none; }
   .plugin-modal-devnotice h3{ font-family:var(--serif); font-size:clamp(1.5rem,3vw,1.9rem); color:var(--bone); margin:0; }
   .plugin-modal-devnotice p{ color:var(--bone-dim); font-size:0.86rem; line-height:1.65; max-width:360px; }
 
@@ -383,7 +383,6 @@
   </div>
   <div class="plugin-grid" id="pluginGrid">
     <div class="plugin-card" data-plugin="vocalift">
-      <span class="plugin-tag">In Development</span>
       <span class="kind">Vocal Riser</span>
       <h3>Vocalift</h3>
       <p>Capture a phrase, stretch and reshape its pitch with formant preservation intact, and resolve it back into the mix as a rising, reversed swell. Built for the moment before the hook lands.</p>
@@ -391,7 +390,6 @@
       <div class="plugin-status">Factory presets in progress — Modern Rap, Blue Notes, and more</div>
     </div>
     <div class="plugin-card" data-plugin="parallax">
-      <span class="plugin-tag">In Development</span>
       <span class="kind">Binaural Spatial Panner</span>
       <h3>Parallax</h3>
       <p>Place a source in three dimensions and hear it move. HRTF convolution, real-world propagation delay, air absorption, and per-source reverb, navigated through a free-orbit 3D view.</p>
@@ -399,7 +397,6 @@
       <div class="plugin-status">Single-pin architecture — sign up for early access</div>
     </div>
     <div class="plugin-card" data-plugin="eli">
-      <span class="plugin-tag">Available Now</span>
       <span class="kind">Saturator</span>
       <h3>Eli</h3>
       <p>A saturation plugin with a character at the wheel. Eli reaches for something different every time — each choice its own harmonic flavor, from warm and rounded to something a lot more volatile.</p>
@@ -407,7 +404,6 @@
       <div class="plugin-status">Available now — not available for Pro Tools (no AAX)</div>
     </div>
     <div class="plugin-card" data-plugin="midify">
-      <span class="plugin-tag">Available Now</span>
       <span class="kind">Audio-to-MIDI</span>
       <h3>Midify</h3>
       <p>Drop in a stem, get MIDI back. Midify transcribes pitched, single-source audio — vocals, bass, leads — into clean, editable MIDI, so an idea caught as audio can keep moving as notes.</p>
@@ -424,7 +420,6 @@
   <button class="plugin-modal-close" id="pluginModalClose" aria-label="Close">&times;</button>
   <div class="plugin-modal-inner" id="pluginModalInner"></div>
   <div class="plugin-modal-devnotice" id="pluginModalDevNotice" hidden>
-    <span class="plugin-tag">In Development</span>
     <h3></h3>
     <p></p>
   </div>
@@ -979,7 +974,6 @@
         devNotice.hidden = true;
         modalInner.classList.remove('is-blurred');
         modalInner.innerHTML =
-          '<span class="plugin-tag">Available Now</span>' +
           '<span class="kind">' + detail.kind + '</span>' +
           '<h3>' + detail.name + '</h3>' +
           '<div class="plugin-modal-photo">Photo coming soon</div>' +
