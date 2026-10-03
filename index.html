@@ -215,7 +215,7 @@
   }
   .plugin-modal.open{ opacity:1; pointer-events:auto; transform:translate(-50%,-50%); }
   .plugin-modal-close{
-    position:absolute; top:16px; right:16px; background:none; border:1px solid var(--hairline); color:var(--bone);
+    position:absolute; top:16px; right:16px; z-index:2; background:none; border:1px solid var(--hairline); color:var(--bone);
     width:32px; height:32px; cursor:pointer; font-size:1.1rem; line-height:1; transition:border-color 0.2s ease, color 0.2s ease;
   }
   .plugin-modal-close:hover{ border-color:var(--white); color:var(--white-bright); }
@@ -1019,8 +1019,7 @@
         let visibleCount = 0;
         cards.forEach(function(card){
           const name = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
-          const kind = card.querySelector('.kind') ? card.querySelector('.kind').textContent.toLowerCase() : '';
-          const match = !q || name.indexOf(q) !== -1 || kind.indexOf(q) !== -1;
+          const match = !q || name.indexOf(q) !== -1;
           card.style.display = match ? '' : 'none';
           if(match) visibleCount++;
         });
