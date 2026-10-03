@@ -221,7 +221,7 @@
   .plugin-modal-inner.is-blurred{ filter:blur(7px); opacity:0.45; pointer-events:none; user-select:none; min-height:300px; }
   .plugin-modal-inner .kind{ margin-top:0; }
   .plugin-modal-gallery{
-    width:100%; margin:16px 0 18px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+    width:100%; margin:16px 0 14px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
   }
   .plugin-modal-gallery-img{
     display:block; max-width:100%; max-height:min(52svh,480px); width:auto; height:auto;
@@ -234,13 +234,13 @@
   .plugin-modal-gallery-arrow:hover{ border-color:var(--white); color:var(--white-bright); }
   .plugin-modal-gallery-prev{ left:6px; }
   .plugin-modal-gallery-next{ right:6px; }
-  .plugin-modal-gallery-dots{ display:flex; justify-content:center; gap:7px; margin-top:12px; }
+  .plugin-modal-gallery-dots{ display:flex; justify-content:center; gap:7px; margin:0 0 14px; }
   .plugin-modal-gallery-dot{
     width:7px; height:7px; border-radius:50%; background:var(--hairline); cursor:pointer; transition:background 0.25s ease, transform 0.25s ease;
   }
   .plugin-modal-gallery-dot.active{ background:var(--white); transform:scale(1.25); }
   .plugin-modal-inner h3{ font-size:clamp(1.6rem,3.4vw,2.1rem); }
-  .plugin-modal-inner p{ font-size:0.92rem; line-height:1.7; }
+  .plugin-modal-inner p{ font-size:0.92rem; line-height:1.7; margin:0; }
   .plugin-modal-footer{
     margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
   }
