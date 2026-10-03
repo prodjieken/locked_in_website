@@ -281,11 +281,15 @@
 
   /* ---------- STUDIOS ---------- */
 
-  #studios{ background:var(--black-soft); border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline); }
+  #studios{
+    background:var(--black-soft); border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline);
+    padding-top:clamp(56px,9svh,88px); padding-bottom:clamp(16px,3svh,32px); display:flex; flex-direction:column; justify-content:center;
+  }
+  #studios .section-head{ margin-bottom:clamp(10px,2svh,18px); }
 
-  .studio-grid{ max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:clamp(6px,1.6vw,14px); }
+  .studio-grid{ max-width:1200px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:clamp(4px,1svh,10px); }
   .studio-card{
-    border:1px solid var(--hairline); height:clamp(160px,32svh,340px); position:relative; overflow:hidden;
+    border:1px solid var(--hairline); height:clamp(70px,13svh,130px); position:relative; overflow:hidden;
     cursor:pointer; transition:border-color 0.4s ease;
   }
   .studio-card:hover{ border-color:var(--white-dim); }
@@ -298,8 +302,8 @@
   .studio-card-label{
     position:relative; z-index:1; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
   }
-  .studio-card .city{ font-family:var(--serif); font-size:clamp(1.3rem,3.4vw,2.2rem); color:var(--bone); }
-  .studio-card .rooms{ margin-top:8px; font-size:clamp(0.6rem,1.3vw,0.72rem); letter-spacing:0.18em; color:var(--white-dim); text-transform:uppercase; }
+  .studio-card .city{ font-family:var(--serif); font-size:clamp(1rem,2.4vw,1.5rem); color:var(--bone); }
+  .studio-card .rooms{ margin-top:4px; font-size:clamp(0.56rem,1.1vw,0.64rem); letter-spacing:0.16em; color:var(--white-dim); text-transform:uppercase; }
 
   /* ---------- STUDIO GALLERY MODAL ---------- */
   .studio-modal-scrim{
