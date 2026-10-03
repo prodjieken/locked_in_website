@@ -607,9 +607,9 @@
 
 <script>
   // ---------- booking backend config ----------
-  // Once the booking backend is deployed, paste its URL here, e.g.
-  // 'https://locked-in-booking-backend.vercel.app'. Leave blank until then.
-  const API_BASE_URL = '';
+  // Background (the staff booking/calendar app) — bookings submitted here
+  // show up there immediately and the client is sent on to confirm/pay.
+  const API_BASE_URL = 'https://background-app-sandy.vercel.app';
 
   // header scroll state
   const header = document.getElementById('siteHeader');
@@ -738,7 +738,7 @@
   async function refreshAvailability(){
     if(!API_BASE_URL || !bookingDate.value || !roomSelect.value) return;
     try{
-      const res = await fetch(API_BASE_URL + '/api/availability?room=' + roomSelect.value + '&date=' + bookingDate.value);
+      const res = await fetch(API_BASE_URL + '/api/public/availability?room=' + roomSelect.value + '&date=' + bookingDate.value);
       if(!res.ok) return;
       const data = await res.json();
       bookedRanges = data.booked || [];
@@ -795,7 +795,7 @@
     requestBookingBtn.textContent = 'Submitting\u2026';
 
     try{
-      const response = await fetch(API_BASE_URL + '/api/create-checkout', {
+      const response = await fetch(API_BASE_URL + '/api/public/bookings/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
