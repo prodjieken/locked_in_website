@@ -247,6 +247,7 @@
   .plugin-modal-footer .plugin-formats{ margin-top:0; }
   .plugin-modal-buy{ width:auto; white-space:nowrap; padding:10px 24px; }
   .plugin-modal-buy:disabled{ opacity:0.6; cursor:default; transform:none; }
+  .plugin-modal-buy.is-unavailable:disabled{ opacity:1; background:transparent; color:var(--muted, #8a857a); border:1px solid var(--hairline); box-shadow:none; }
   .plugin-modal-buy-error{ margin-top:12px; font-size:0.8rem; color:#d9756a; text-align:right; }
   .plugin-modal-buy-error:empty{ display:none; }
   .plugin-modal-buyrow{ display:flex; align-items:center; gap:16px; }
@@ -1077,12 +1078,32 @@
           '<p class="plugin-modal-buy-error" role="alert"></p>';
 
         const priceSlot = modalInner.querySelector('.plugin-modal-price');
-        if(priceSlot && !priceSlot.innerHTML){
-          pricesReady.then(function(){ if(priceSlot.isConnected) priceSlot.innerHTML = priceHtml(id); });
-        }
         const codeInput = modalInner.querySelector('.plugin-modal-code-input');
         const buyBtn = modalInner.querySelector('.plugin-modal-buy');
         const buyError = modalInner.querySelector('.plugin-modal-buy-error');
+        const buyLabel = buyBtn ? buyBtn.textContent : '';
+        // Show the live price, or grey the button out when the plugin is switched
+        // off in Background ("For sale" unticked). If prices can't be loaded at all,
+        // leave the button alone — the server still refuses anything not for sale.
+        function applyAvailability(){
+          if(!buyBtn || !buyBtn.isConnected) return;
+          const info = PLUGIN_PRICES[id];
+          if(priceSlot) priceSlot.innerHTML = priceHtml(id);
+          const unavailable = !!info && !info.for_sale;
+          const codeWrap = modalInner.querySelector('.plugin-modal-code');
+          if(codeWrap) codeWrap.style.display = unavailable ? 'none' : '';
+          if(unavailable){
+            buyBtn.disabled = true;
+            buyBtn.textContent = 'Currently unavailable';
+            buyBtn.classList.add('is-unavailable');
+          } else if(buyBtn.classList.contains('is-unavailable')){
+            buyBtn.disabled = false;
+            buyBtn.textContent = buyLabel;
+            buyBtn.classList.remove('is-unavailable');
+          }
+        }
+        applyAvailability();
+        pricesReady.then(applyAvailability);
         if(buyBtn) buyBtn.addEventListener('click', async function(){
           const label = buyBtn.textContent;
           buyError.textContent = '';
