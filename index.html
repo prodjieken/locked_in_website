@@ -254,8 +254,15 @@
   .plugin-modal-price{ display:flex; align-items:baseline; gap:10px; white-space:nowrap; }
   .plugin-modal-price-old{ opacity:.5; font-size:0.9rem; }
   .plugin-modal-price-now{ font-size:1.2rem; font-weight:600; }
-  .plugin-modal-code{ margin-top:12px; display:flex; justify-content:flex-end; }
-  .plugin-modal-code-input{ width:160px; background:transparent; border:1px solid var(--hairline); color:inherit; padding:8px 12px; font:inherit; font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase; border-radius:0; }
+  .plugin-modal-code{ margin-top:12px; display:flex; justify-content:flex-end; gap:8px; }
+  .plugin-modal-code-apply{ background:transparent; border:1px solid var(--hairline); color:inherit; padding:8px 16px; font:inherit; font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; }
+  .plugin-modal-code-apply:hover:not(:disabled){ border-color:var(--gold, #fff); }
+  .plugin-modal-code-apply:disabled{ opacity:.5; cursor:default; }
+  .plugin-modal-code-status{ margin:8px 0 0; font-size:0.8rem; text-align:right; }
+  .plugin-modal-code-status:empty{ display:none; }
+  .plugin-modal-code-status.ok{ color:#8fc79a; }
+  .plugin-modal-code-status.bad{ color:#d9756a; }
+  .plugin-modal-code-input{ width:160px; background:transparent; border:1px solid var(--hairline); color:inherit; padding:8px 12px; font:inherit; font-size:0.8rem; letter-spacing:0.04em; border-radius:0; }
   .plugin-modal-code-input::placeholder{ text-transform:none; letter-spacing:0; opacity:.5; }
   .plugin-modal-code-input:focus{ outline:none; border-color:var(--gold, #fff); }
   .plugin-modal-devnotice{
@@ -705,12 +712,12 @@
   // Background (the staff booking/calendar app) — bookings submitted here
   // show up there immediately and the client is sent on to confirm/pay.
   const API_BASE_URL = 'https://background-app-sandy.vercel.app';
-  // A link like lockedinthestudio.com/?code=JAY20 pre-fills the discount code.
+  // A link like lockedinthestudio.com/?code=JAY20 pre-fills the discount code (codes are case-sensitive).
   // Sanitised to the characters codes can contain, so it is safe to put in markup.
   const REFERRAL_CODE = (function(){
     try {
       const raw = new URLSearchParams(window.location.search).get('code') || '';
-      return raw.toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 24);
+      return raw.replace(/[^A-Za-z0-9-]/g, '').slice(0, 24);
     } catch(e){ return ''; }
   })();
   // Live prices from Background, so a price change or sale shows without editing this file.
@@ -1074,7 +1081,9 @@
             '<div class="plugin-modal-buyrow"><span class="plugin-modal-price">' + priceHtml(id) + '</span>' +
             '<button type="button" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</button></div>' +
           '</div>' +
-          '<div class="plugin-modal-code"><input type="text" class="plugin-modal-code-input" placeholder="Discount code" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Discount code" value="' + REFERRAL_CODE + '"></div>' +
+          '<div class="plugin-modal-code"><input type="text" class="plugin-modal-code-input" placeholder="Discount code" maxlength="24" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Discount code" value="' + REFERRAL_CODE + '">' +
+          '<button type="button" class="plugin-modal-code-apply">Apply</button></div>' +
+          '<p class="plugin-modal-code-status" role="status"></p>' +
           '<p class="plugin-modal-buy-error" role="alert"></p>';
 
         const priceSlot = modalInner.querySelector('.plugin-modal-price');
@@ -1085,13 +1094,70 @@
         // Show the live price, or grey the button out when the plugin is switched
         // off in Background ("For sale" unticked). If prices can't be loaded at all,
         // leave the button alone — the server still refuses anything not for sale.
+        const codeApply = modalInner.querySelector('.plugin-modal-code-apply');
+        const codeStatus = modalInner.querySelector('.plugin-modal-code-status');
+        let applied = null;   // { code, final_cents, price_cents, percent_off } once a code is accepted
+
+        function renderPrice(){
+          if(!priceSlot) return;
+          if(applied){
+            priceSlot.innerHTML = '<s class="plugin-modal-price-old">' + formatPrice(applied.price_cents) + '</s>' +
+              '<span class="plugin-modal-price-now">' + formatPrice(applied.final_cents) + '</span>';
+          } else {
+            priceSlot.innerHTML = priceHtml(id);
+          }
+        }
+        function clearApplied(){
+          applied = null;
+          if(codeStatus){ codeStatus.textContent = ''; codeStatus.className = 'plugin-modal-code-status'; }
+          renderPrice();
+        }
+        async function applyCode(){
+          const value = codeInput ? codeInput.value.trim() : '';
+          if(!value){ clearApplied(); return; }
+          codeApply.disabled = true;
+          codeStatus.className = 'plugin-modal-code-status';
+          codeStatus.textContent = 'Checking\u2026';
+          try {
+            const res = await fetch(API_BASE_URL + '/api/public/plugins/validate-code', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ product_id: id, code: value })
+            });
+            const data = await res.json().catch(function(){ return {}; });
+            if(!codeInput || !codeInput.isConnected || codeInput.value.trim() !== value) return; // changed or modal closed meanwhile
+            if(res.ok && data.valid){
+              applied = data;
+              codeStatus.className = 'plugin-modal-code-status ok';
+              codeStatus.textContent = data.code + ' applied \u2014 ' + data.percent_off + '% off';
+            } else {
+              applied = null;
+              codeStatus.className = 'plugin-modal-code-status bad';
+              codeStatus.textContent = data.message || 'That discount code isn\u2019t valid.';
+            }
+          } catch(e) {
+            applied = null;
+            codeStatus.className = 'plugin-modal-code-status bad';
+            codeStatus.textContent = 'Couldn\u2019t check that code. Please try again.';
+          }
+          codeApply.disabled = false;
+          renderPrice();
+        }
+        if(codeApply) codeApply.addEventListener('click', applyCode);
+        if(codeInput){
+          codeInput.addEventListener('input', function(){ if(applied || codeStatus.textContent) clearApplied(); });
+          codeInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); applyCode(); } });
+        }
+
+        let autoApplied = false;
         function applyAvailability(){
           if(!buyBtn || !buyBtn.isConnected) return;
           const info = PLUGIN_PRICES[id];
-          if(priceSlot) priceSlot.innerHTML = priceHtml(id);
+          renderPrice();
           const unavailable = !!info && !info.for_sale;
           const codeWrap = modalInner.querySelector('.plugin-modal-code');
           if(codeWrap) codeWrap.style.display = unavailable ? 'none' : '';
+          if(codeStatus && unavailable) codeStatus.style.display = 'none';
           if(unavailable){
             buyBtn.disabled = true;
             buyBtn.textContent = 'Currently unavailable';
@@ -1100,6 +1166,11 @@
             buyBtn.disabled = false;
             buyBtn.textContent = buyLabel;
             buyBtn.classList.remove('is-unavailable');
+          }
+          // A ?code= link applies its code automatically once we know the plugin is for sale.
+          if(!unavailable && info && !autoApplied && codeInput && codeInput.value.trim()){
+            autoApplied = true;
+            applyCode();
           }
         }
         applyAvailability();
