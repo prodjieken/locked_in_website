@@ -262,7 +262,7 @@
   .plugin-modal-code-status:empty{ display:none; }
   .plugin-modal-code-status.ok{ color:#8fc79a; }
   .plugin-modal-code-status.bad{ color:#d9756a; }
-  .plugin-modal-code-input{ width:160px; background:transparent; border:1px solid var(--hairline); color:inherit; padding:8px 12px; font:inherit; font-size:0.8rem; letter-spacing:0.04em; border-radius:0; }
+  .plugin-modal-code-input{ width:160px; background:transparent; border:1px solid var(--hairline); color:inherit; padding:8px 12px; font:inherit; font-size:0.8rem; letter-spacing:0.04em; border-radius:0; text-transform:uppercase; }
   .plugin-modal-code-input::placeholder{ text-transform:none; letter-spacing:0; opacity:.5; }
   .plugin-modal-code-input:focus{ outline:none; border-color:var(--gold, #fff); }
   .plugin-modal-devnotice{
@@ -1081,7 +1081,7 @@
             '<div class="plugin-modal-buyrow"><span class="plugin-modal-price">' + priceHtml(id) + '</span>' +
             '<button type="button" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</button></div>' +
           '</div>' +
-          '<div class="plugin-modal-code"><input type="text" class="plugin-modal-code-input" placeholder="Discount code" maxlength="24" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Discount code" value="' + REFERRAL_CODE + '">' +
+          '<div class="plugin-modal-code"><input type="text" class="plugin-modal-code-input" placeholder="Discount code" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Discount code" value="' + REFERRAL_CODE + '">' +
           '<button type="button" class="plugin-modal-code-apply">Apply</button></div>' +
           '<p class="plugin-modal-code-status" role="status"></p>' +
           '<p class="plugin-modal-buy-error" role="alert"></p>';
@@ -1145,7 +1145,7 @@
         }
         if(codeApply) codeApply.addEventListener('click', applyCode);
         if(codeInput){
-          codeInput.addEventListener('input', function(){ if(applied || codeStatus.textContent) clearApplied(); });
+          codeInput.addEventListener('input', function(){ var up = codeInput.value.toUpperCase(); if(codeInput.value !== up) codeInput.value = up; if(applied || codeStatus.textContent) clearApplied(); });
           codeInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); applyCode(); } });
         }
 
