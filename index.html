@@ -249,6 +249,10 @@
   .plugin-modal-buy:disabled{ opacity:0.6; cursor:default; transform:none; }
   .plugin-modal-buy-error{ margin-top:12px; font-size:0.8rem; color:#d9756a; text-align:right; }
   .plugin-modal-buy-error:empty{ display:none; }
+  .plugin-modal-buyrow{ display:flex; align-items:center; gap:16px; }
+  .plugin-modal-price{ display:flex; align-items:baseline; gap:10px; white-space:nowrap; }
+  .plugin-modal-price-old{ opacity:.5; font-size:0.9rem; }
+  .plugin-modal-price-now{ font-size:1.2rem; font-weight:600; }
   .plugin-modal-code{ margin-top:12px; display:flex; justify-content:flex-end; }
   .plugin-modal-code-input{ width:160px; background:transparent; border:1px solid var(--hairline); color:inherit; padding:8px 12px; font:inherit; font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase; border-radius:0; }
   .plugin-modal-code-input::placeholder{ text-transform:none; letter-spacing:0; opacity:.5; }
@@ -708,6 +712,22 @@
       return raw.toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 24);
     } catch(e){ return ''; }
   })();
+  // Live prices from Background, so a price change or sale shows without editing this file.
+  const PLUGIN_PRICES = {};
+  const pricesReady = fetch(API_BASE_URL + '/api/public/plugins/products')
+    .then(function(r){ return r.ok ? r.json() : { products: [] }; })
+    .then(function(d){ (d.products || []).forEach(function(p){ PLUGIN_PRICES[p.id] = p; }); })
+    .catch(function(){});
+  function formatPrice(cents){
+    const v = cents / 100;
+    return '$' + (Number.isInteger(v) ? v : v.toFixed(2));
+  }
+  function priceHtml(id){
+    const p = PLUGIN_PRICES[id];
+    if(!p || !p.for_sale || !p.price_cents) return '';
+    return (p.compare_at_cents ? '<s class="plugin-modal-price-old">' + formatPrice(p.compare_at_cents) + '</s>' : '') +
+           '<span class="plugin-modal-price-now">' + formatPrice(p.price_cents) + '</span>';
+  }
 
   // header scroll state
   const header = document.getElementById('siteHeader');
@@ -1050,11 +1070,16 @@
           '<p>' + detail.description + '</p>' +
           '<div class="plugin-modal-footer">' +
             '<div class="plugin-formats">' + detail.formats.map(function(f){ return '<span>' + f + '</span>'; }).join('') + '</div>' +
-            '<button type="button" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</button>' +
+            '<div class="plugin-modal-buyrow"><span class="plugin-modal-price">' + priceHtml(id) + '</span>' +
+            '<button type="button" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</button></div>' +
           '</div>' +
           '<div class="plugin-modal-code"><input type="text" class="plugin-modal-code-input" placeholder="Discount code" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Discount code" value="' + REFERRAL_CODE + '"></div>' +
           '<p class="plugin-modal-buy-error" role="alert"></p>';
 
+        const priceSlot = modalInner.querySelector('.plugin-modal-price');
+        if(priceSlot && !priceSlot.innerHTML){
+          pricesReady.then(function(){ if(priceSlot.isConnected) priceSlot.innerHTML = priceHtml(id); });
+        }
         const codeInput = modalInner.querySelector('.plugin-modal-code-input');
         const buyBtn = modalInner.querySelector('.plugin-modal-buy');
         const buyError = modalInner.querySelector('.plugin-modal-buy-error');
