@@ -246,6 +246,9 @@
   }
   .plugin-modal-footer .plugin-formats{ margin-top:0; }
   .plugin-modal-buy{ width:auto; white-space:nowrap; padding:10px 24px; }
+  .plugin-modal-buy:disabled{ opacity:0.6; cursor:default; transform:none; }
+  .plugin-modal-buy-error{ margin-top:12px; font-size:0.8rem; color:#d9756a; text-align:right; }
+  .plugin-modal-buy-error:empty{ display:none; }
   .plugin-modal-devnotice{
     position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:0 34px; gap:12px;
@@ -954,8 +957,7 @@
         name: 'Eli',
         description: 'A saturation plugin with a character at the wheel. Eli reaches for something different every time — each choice its own harmonic flavor, from warm and rounded to something a lot more volatile. Turn the dial and hear what he picks.',
         formats: ['VST3','AU','CLAP','macOS','Windows'],
-        photos: ['images/eli-idle.png','images/eli-cocaine.png','images/eli-alcohol.png','images/eli-weed.png'],
-        buyUrl: 'mailto:info@lockedinthestudio.com?subject=' + encodeURIComponent('Purchase Eli')
+        photos: ['images/eli-idle.png','images/eli-cocaine.png','images/eli-alcohol.png','images/eli-weed.png']
       },
       midify: {
         inDevelopment: false,
@@ -963,8 +965,7 @@
         name: 'Midify',
         description: 'Drop in a stem, get MIDI back. Midify transcribes pitched, single-source audio — vocals, bass, leads — into clean, editable MIDI, so an idea caught as audio can keep moving as notes. Built for stems and sketching, not full mixes or drums.',
         formats: ['VST3','AU','CLAP','macOS','Windows'],
-        photos: ['images/midify-ui.png'],
-        buyUrl: 'mailto:info@lockedinthestudio.com?subject=' + encodeURIComponent('Purchase Midify')
+        photos: ['images/midify-ui.png']
       }
     };
 
@@ -1037,8 +1038,34 @@
           '<p>' + detail.description + '</p>' +
           '<div class="plugin-modal-footer">' +
             '<div class="plugin-formats">' + detail.formats.map(function(f){ return '<span>' + f + '</span>'; }).join('') + '</div>' +
-            '<a href="' + detail.buyUrl + '" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</a>' +
-          '</div>';
+            '<button type="button" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</button>' +
+          '</div>' +
+          '<p class="plugin-modal-buy-error" role="alert"></p>';
+
+        const buyBtn = modalInner.querySelector('.plugin-modal-buy');
+        const buyError = modalInner.querySelector('.plugin-modal-buy-error');
+        if(buyBtn) buyBtn.addEventListener('click', async function(){
+          const label = buyBtn.textContent;
+          buyError.textContent = '';
+          buyBtn.disabled = true;
+          buyBtn.textContent = 'One moment\u2026';
+          try {
+            const res = await fetch(API_BASE_URL + '/api/public/plugins/checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ product_id: id })
+            });
+            const data = await res.json().catch(function(){ return {}; });
+            if(res.ok && data.url){ window.location.href = data.url; return; }
+            buyError.textContent = data.error === 'not_for_sale'
+              ? (data.message || 'This plugin isn\u2019t available to purchase yet.')
+              : 'Couldn\u2019t start checkout. Please try again, or email info@lockedinthestudio.com.';
+          } catch(e) {
+            buyError.textContent = 'Couldn\u2019t reach checkout. Please try again, or email info@lockedinthestudio.com.';
+          }
+          buyBtn.disabled = false;
+          buyBtn.textContent = label;
+        });
 
         if(hasPhotos){
           galleryPhotos = detail.photos;
