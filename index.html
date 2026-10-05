@@ -246,7 +246,11 @@
   }
   .plugin-modal-footer .plugin-formats{ margin-top:0; }
   .plugin-modal-buy{ width:auto; white-space:nowrap; padding:10px 24px; }
-  .plugin-modal-share{ width:auto; white-space:nowrap; padding:10px 18px; }
+  .plugin-modal-share{
+    position:absolute; top:16px; right:58px; height:32px; padding:0 14px; background:none; border:1px solid var(--hairline); color:var(--bone);
+    font:inherit; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap; transition:border-color 0.2s ease, color 0.2s ease;
+  }
+  .plugin-modal-share:hover{ border-color:var(--white); color:var(--white-bright); }
   .plugin-modal-buy:disabled{ opacity:0.6; cursor:default; transform:none; }
   .plugin-modal-buy.is-unavailable:disabled{ opacity:1; background:transparent; color:var(--muted, #8a857a); border:1px solid var(--hairline); box-shadow:none; }
   .plugin-modal-buy-error{ margin-top:12px; font-size:0.8rem; color:#d9756a; text-align:right; }
@@ -1062,6 +1066,7 @@
         const hasPhotos = detail.photos && detail.photos.length > 0;
         const multi = hasPhotos && detail.photos.length > 1;
         modalInner.innerHTML =
+          '<button type="button" class="plugin-modal-share" aria-label="Share ' + detail.name + '">Share</button>' +
           '<span class="kind">' + detail.kind + '</span>' +
           '<h3>' + detail.name + '</h3>' +
           (hasPhotos ?
@@ -1080,7 +1085,6 @@
           '<div class="plugin-modal-footer">' +
             '<div class="plugin-formats">' + detail.formats.map(function(f){ return '<span>' + f + '</span>'; }).join('') + '</div>' +
             '<div class="plugin-modal-buyrow"><span class="plugin-modal-price">' + priceHtml(id) + '</span>' +
-            '<button type="button" class="btn btn-ghost plugin-modal-share" aria-label="Share ' + detail.name + '">Share</button>' +
             '<button type="button" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</button></div>' +
           '</div>' +
           '<div class="plugin-modal-code"><input type="text" class="plugin-modal-code-input" placeholder="Discount code" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Discount code" value="' + REFERRAL_CODE + '">' +
