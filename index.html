@@ -246,6 +246,7 @@
   }
   .plugin-modal-footer .plugin-formats{ margin-top:0; }
   .plugin-modal-buy{ width:auto; white-space:nowrap; padding:10px 24px; }
+  .plugin-modal-share{ width:auto; white-space:nowrap; padding:10px 18px; }
   .plugin-modal-buy:disabled{ opacity:0.6; cursor:default; transform:none; }
   .plugin-modal-buy.is-unavailable:disabled{ opacity:1; background:transparent; color:var(--muted, #8a857a); border:1px solid var(--hairline); box-shadow:none; }
   .plugin-modal-buy-error{ margin-top:12px; font-size:0.8rem; color:#d9756a; text-align:right; }
@@ -1079,6 +1080,7 @@
           '<div class="plugin-modal-footer">' +
             '<div class="plugin-formats">' + detail.formats.map(function(f){ return '<span>' + f + '</span>'; }).join('') + '</div>' +
             '<div class="plugin-modal-buyrow"><span class="plugin-modal-price">' + priceHtml(id) + '</span>' +
+            '<button type="button" class="btn btn-ghost plugin-modal-share" aria-label="Share ' + detail.name + '">Share</button>' +
             '<button type="button" class="btn btn-gold plugin-modal-buy">Buy ' + detail.name + '</button></div>' +
           '</div>' +
           '<div class="plugin-modal-code"><input type="text" class="plugin-modal-code-input" placeholder="Discount code" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Discount code" value="' + REFERRAL_CODE + '">' +
@@ -1091,6 +1093,30 @@
         const buyBtn = modalInner.querySelector('.plugin-modal-buy');
         const buyError = modalInner.querySelector('.plugin-modal-buy-error');
         const buyLabel = buyBtn ? buyBtn.textContent : '';
+        const shareBtn = modalInner.querySelector('.plugin-modal-share');
+        if(shareBtn){
+          shareBtn.addEventListener('click', async function(){
+            // Link straight to this plugin (no discount code in it).
+            const url = window.location.origin + window.location.pathname + '?plugin=' + encodeURIComponent(id) + '#plugins';
+            if(navigator.share){
+              try { await navigator.share({ title: detail.name + ' \u2014 Locked In', url: url }); return; }
+              catch(e){ if(e && e.name === 'AbortError') return; }
+            }
+            let copied = false;
+            try { await navigator.clipboard.writeText(url); copied = true; }
+            catch(e){
+              try {
+                const ta = document.createElement('textarea');
+                ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select();
+                copied = document.execCommand('copy');
+                document.body.removeChild(ta);
+              } catch(e2){}
+            }
+            shareBtn.textContent = copied ? 'Link copied \u2713' : 'Copy: ' + url;
+            setTimeout(function(){ if(shareBtn.isConnected) shareBtn.textContent = 'Share'; }, 2500);
+          });
+        }
         // Show the live price, or grey the button out when the plugin is switched
         // off in Background ("For sale" unticked). If prices can't be loaded at all,
         // leave the button alone — the server still refuses anything not for sale.
@@ -1276,6 +1302,17 @@
         if(emptyState) emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
       });
     }
+
+    // A shared link like /?plugin=eli opens that plugin's page straight away.
+    (function openSharedPlugin(){
+      let wanted = '';
+      try { wanted = new URLSearchParams(window.location.search).get('plugin') || ''; } catch(e){}
+      wanted = wanted.replace(/[^A-Za-z0-9_-]/g, '');
+      if(wanted && document.querySelector('.plugin-card[data-plugin="' + wanted + '"]')){
+        goToSection('plugins');
+        openModal(wanted);
+      }
+    })();
   })();
 </script>
 
