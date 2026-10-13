@@ -109,6 +109,8 @@
   .page{ display:none; min-height:100svh; }
   .page.active{ display:block; animation:pageFade 0.35s ease; }
   .hero.page.active{ display:flex; }
+  /* The staggered fade-in is for the first visit only; coming back via the logo shows everything at once. */
+  .revisit .hero > *{ animation:none; opacity:1; transform:none; }
   footer.page.active{ display:flex; flex-direction:column; justify-content:center; }
   @keyframes pageFade{ from{ opacity:0; } to{ opacity:1; } }
 
@@ -782,6 +784,8 @@
 
   function goToSection(id){
     if(!validIds.includes(id)) return;
+    if(window.__navigated) document.documentElement.classList.add('revisit');
+    window.__navigated = true;
     pages.forEach(p => p.classList.toggle('active', p.id === id));
     window.scrollTo(0, 0);
     if(location.hash !== '#' + id){ history.replaceState(null, '', '#' + id); }
