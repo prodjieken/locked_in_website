@@ -68,7 +68,8 @@
 
   .brand{ display:flex; align-items:center; gap:12px; cursor:pointer; }
   .brand img.logo-mark{ width:22px; height:35px; object-fit:contain; flex-shrink:0; transition:transform 0.5s ease; }
-  .brand:hover img.logo-mark{ transform:rotate(-6deg) scale(1.06); }
+  .brand{ touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+  @media (hover:hover){ .brand:hover img.logo-mark{ transform:rotate(-6deg) scale(1.06); } }
   .brand-word{ font-family:var(--serif); font-size:1.28rem; letter-spacing:0.12em; color:var(--bone); }
 
   .nav-right{ display:flex; align-items:center; gap:28px; }
@@ -801,6 +802,9 @@
     closeMenu();
     goToSection('home');
   });
+
+  // Back-up for any plain #link (e.g. the logo) whose click handler didn't run.
+  window.addEventListener('hashchange', () => { closeMenu(); goToSection(location.hash.slice(1)); });
 
   // land on the right page if opening a direct link like #booking,
   // otherwise default to home
