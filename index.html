@@ -1281,6 +1281,19 @@
               startGalleryAutoplay();
             });
           });
+          // No arrow buttons: click the left or right half of the picture to go back or forward.
+          const galleryBox = modalInner.querySelector('.plugin-modal-gallery');
+          if(galleryBox && galleryPhotos.length > 1){
+            const side = function(e){ const r = galleryBox.getBoundingClientRect(); return (e.clientX - r.left) < r.width / 2 ? -1 : 1; };
+            galleryBox.style.cursor = 'pointer';
+            galleryBox.addEventListener('mousemove', function(e){ galleryBox.style.cursor = side(e) < 0 ? 'w-resize' : 'e-resize'; });
+            galleryBox.addEventListener('click', function(e){
+              const dir = side(e);
+              galleryIndex = (galleryIndex + dir + galleryPhotos.length) % galleryPhotos.length;
+              renderGalleryFrame(dir);
+              startGalleryAutoplay();
+            });
+          }
         }
       }
 
