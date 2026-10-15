@@ -1045,21 +1045,33 @@
     let galleryIndex = 0;
     let galleryTimer = null;
 
+    let galleryToken = 0;
     function renderGalleryFrame(direction){
       const img = modalInner.querySelector('.plugin-modal-gallery-img');
       const dots = modalInner.querySelectorAll('.plugin-modal-gallery-dot');
       if(!img) return;
-      if(direction){
-        img.style.transition = 'none';
-        img.style.opacity = '0';
-        img.style.transform = 'translateX(' + (direction * 18) + 'px)';
-        void img.offsetWidth;
-        img.style.transition = 'transform 0.35s ease, opacity 0.35s ease';
-      }
-      img.src = galleryPhotos[galleryIndex];
-      img.style.opacity = '1';
-      img.style.transform = 'translateX(0)';
       dots.forEach(function(dot, i){ dot.classList.toggle('active', i === galleryIndex); });
+      const src = galleryPhotos[galleryIndex];
+      const token = ++galleryToken;
+      if(!direction){ img.src = src; return; }
+      // Fade the old picture out, swap only once the new one is decoded, then fade it in.
+      img.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+      img.style.opacity = '0';
+      img.style.transform = 'translateX(' + (-direction * 14) + 'px)';
+      const pre = new Image();
+      pre.src = src;
+      setTimeout(function(){
+        (pre.decode ? pre.decode().catch(function(){}) : Promise.resolve()).then(function(){
+          if(token !== galleryToken) return;
+          img.style.transition = 'none';
+          img.src = src;
+          img.style.transform = 'translateX(' + (direction * 14) + 'px)';
+          void img.offsetWidth;
+          img.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          img.style.opacity = '1';
+          img.style.transform = 'translateX(0)';
+        });
+      }, 450);
     }
 
     function stopGalleryAutoplay(){
@@ -1072,7 +1084,7 @@
       galleryTimer = setInterval(function(){
         galleryIndex = (galleryIndex + 1) % galleryPhotos.length;
         renderGalleryFrame(1);
-      }, 3200);
+      }, 4500);
     }
 
     function openModal(id){
