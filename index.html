@@ -230,13 +230,6 @@
     display:block; max-width:100%; max-height:min(52svh,480px); width:auto; height:auto;
     transition:transform 0.35s ease, opacity 0.35s ease;
   }
-  .plugin-modal-gallery-arrow{
-    position:absolute; top:50%; transform:translateY(-50%); background:rgba(10,9,8,0.6); border:1px solid var(--hairline); color:var(--bone);
-    width:32px; height:32px; cursor:pointer; font-size:1rem; line-height:1; z-index:1; transition:border-color 0.2s ease, color 0.2s ease;
-  }
-  .plugin-modal-gallery-arrow:hover{ border-color:var(--white); color:var(--white-bright); }
-  .plugin-modal-gallery-prev{ left:6px; }
-  .plugin-modal-gallery-next{ right:6px; }
   .plugin-modal-gallery-dots{ display:flex; justify-content:center; gap:7px; margin:0 0 14px; }
   .plugin-modal-gallery-dot{
     width:7px; height:7px; border-radius:50%; background:var(--hairline); cursor:pointer; transition:background 0.25s ease, transform 0.25s ease;
@@ -1105,9 +1098,7 @@
           '<h3>' + detail.name + '</h3>' +
           (hasPhotos ?
             '<div class="plugin-modal-gallery">' +
-              (multi ? '<button type="button" class="plugin-modal-gallery-arrow plugin-modal-gallery-prev" aria-label="Previous photo">&lsaquo;</button>' : '') +
               '<img class="plugin-modal-gallery-img" alt="' + detail.name + ' screenshot">' +
-              (multi ? '<button type="button" class="plugin-modal-gallery-arrow plugin-modal-gallery-next" aria-label="Next photo">&rsaquo;</button>' : '') +
             '</div>' +
             (multi ?
               '<div class="plugin-modal-gallery-dots">' +
@@ -1267,20 +1258,6 @@
           galleryIndex = 0;
           renderGalleryFrame();
           startGalleryAutoplay();
-          const prevBtn = modalInner.querySelector('.plugin-modal-gallery-prev');
-          const nextBtn = modalInner.querySelector('.plugin-modal-gallery-next');
-          if(prevBtn) prevBtn.addEventListener('click', function(e){
-            e.stopPropagation();
-            galleryIndex = (galleryIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
-            renderGalleryFrame(-1);
-            startGalleryAutoplay();
-          });
-          if(nextBtn) nextBtn.addEventListener('click', function(e){
-            e.stopPropagation();
-            galleryIndex = (galleryIndex + 1) % galleryPhotos.length;
-            renderGalleryFrame(1);
-            startGalleryAutoplay();
-          });
           const dots = Array.prototype.slice.call(modalInner.querySelectorAll('.plugin-modal-gallery-dot'));
           dots.forEach(function(dot){
             dot.addEventListener('click', function(e){
