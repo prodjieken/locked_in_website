@@ -398,7 +398,7 @@
   .amb1{ left:12%; top:-10%; width:640px; height:520px; background:radial-gradient(circle,rgba(196,163,90,.38),transparent 68%); animation:ambA 38s ease-in-out infinite; }
   .amb2{ right:8%; bottom:-20%; width:700px; height:560px; background:radial-gradient(circle,rgba(224,200,120,.22),transparent 68%); animation:ambB 46s ease-in-out infinite; }
   .amb3{ left:38%; top:20%; width:420px; height:420px; background:radial-gradient(circle,rgba(196,163,90,.16),transparent 68%); animation:ambC 60s ease-in-out infinite; }
-  .amb-mark{ position:absolute; left:50%; top:50%; height:62%; width:auto; will-change:transform,opacity; animation:ambMark 18s ease-in-out infinite; }
+  .amb-mark{ position:absolute; left:50%; top:50%; height:62%; width:auto; filter:blur(10px); will-change:transform,opacity; animation:ambMark 18s ease-in-out infinite; }
   .amb-vig{ position:absolute; inset:0; background:radial-gradient(ellipse at 50% 50%,transparent 35%,#060606 100%); }
   @keyframes ambA{ 0%,100%{transform:translate(0,0) scale(1);opacity:.55} 25%{transform:translate(45vw,12vh) scale(1.2);opacity:.9} 50%{transform:translate(55vw,55vh) scale(.95);opacity:.6} 75%{transform:translate(10vw,40vh) scale(1.15);opacity:.85} }
   @keyframes ambB{ 0%,100%{transform:translate(0,0) scale(1.1);opacity:.4} 30%{transform:translate(-50vw,-25vh) scale(.9);opacity:.75} 60%{transform:translate(-20vw,-60vh) scale(1.2);opacity:.5} 80%{transform:translate(-60vw,-10vh) scale(1);opacity:.7} }
