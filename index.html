@@ -428,11 +428,11 @@
   .dropdown{ top:calc(var(--nav-h) - 6px); background:#0b0b0b; border-color:var(--line); }
   .dropdown a:hover{ color:var(--gold-hi); }
 
-  /* every section is a full screen */
-  .page{ display:flex !important; flex-direction:column; justify-content:center; min-height:calc(100svh - var(--nav-h)); position:relative; z-index:1;
-    background:transparent !important; border:0 !important; border-top:1px solid var(--line) !important; animation:none !important;
+  /* one page at a time, each a full screen */
+  .page{ display:none !important; flex-direction:column; justify-content:center; min-height:calc(100svh - var(--nav-h)); position:relative; z-index:1;
+    background:transparent !important; border:0 !important;
     padding:60px clamp(24px,6vw,72px); }
-  #home{ border-top:0 !important; }
+  .page.active{ display:flex !important; animation:pageFade .35s ease; }
   #studios, #plugins, #services, #booking, #contact{ min-height:calc(100svh - var(--nav-h)); }
   .section-head{ margin:0 auto 52px; }
   .eyebrow{ font-family:var(--sans); font-style:normal; font-size:.7rem; letter-spacing:.4em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-right:-.4em; }
@@ -926,18 +926,14 @@
   menuToggle.addEventListener('click', toggleMenu);
   scrim.addEventListener('click', closeMenu);
 
-  // navigation — one scrolling page. Menu / in-page links glide the chosen section to the middle of the screen.
+  // navigation — one full-screen page at a time
   const pages = Array.from(document.querySelectorAll('.page'));
   const validIds = pages.map(p => p.id);
 
-  function goToSection(id, instant){
+  function goToSection(id){
     if(!validIds.includes(id)) return;
-    const el = document.getElementById(id);
-    const navH = header.offsetHeight, vh = window.innerHeight;
-    const r = el.getBoundingClientRect(), top = window.scrollY + r.top;
-    // sections shorter than the screen centre; taller ones sit just under the menu
-    const y = id === 'home' ? 0 : (r.height < vh - navH ? top - (vh - r.height) / 2 : top - navH);
-    window.scrollTo({ top: Math.max(0, y), behavior: instant ? 'auto' : 'smooth' });
+    pages.forEach(p => p.classList.toggle('active', p.id === id));
+    window.scrollTo(0, 0);
     if(location.hash !== '#' + id){ history.replaceState(null, '', '#' + id); }
   }
 
@@ -960,11 +956,8 @@
   // Back-up for any plain #link whose click handler didn't run.
   window.addEventListener('hashchange', () => { closeMenu(); goToSection(location.hash.slice(1)); });
 
-  // opening a direct link like #booking lands on that section
-  (function initialLoad(){
-    const id = location.hash.slice(1);
-    if(validIds.includes(id) && id !== 'home') window.addEventListener('load', () => goToSection(id, true));
-  })();
+  // land on the right page for a direct link like #booking, otherwise home
+  goToSection(validIds.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home');
 
   // ambient logo: reuse the logo already on the page
   (function(){
