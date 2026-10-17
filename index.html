@@ -422,7 +422,6 @@
   @media (min-width:900px){
     header{ grid-template-columns:1fr auto 1fr; justify-content:stretch; }
     .nav-inline{ display:flex; }
-    .nav-book{ display:inline-block; }
     .menu-toggle{ display:none; }
   }
   .dropdown{ top:calc(var(--nav-h) - 6px); background:#0b0b0b; border-color:var(--line); }
@@ -566,13 +565,13 @@
     <span class="brand-word">LOCKED IN</span>
   </a>
   <nav class="nav-inline" aria-label="Main">
+    <a href="#booking">Book</a>
     <a href="#plugins">Plugins</a>
     <a href="#studios">Rooms</a>
     <a href="#services">Services</a>
     <a href="#contact">Contact</a>
   </nav>
   <div class="nav-right">
-    <a href="#booking" class="nav-book">Book</a>
     <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="dropdown">
       <span>Menu</span>
       <span class="bars"><span></span><span></span><span></span></span>
