@@ -74,6 +74,15 @@
 
   .nav-right{ display:flex; align-items:center; gap:28px; }
 
+
+  /* inline nav (desktop); the Menu dropdown stays for phones */
+  .nav-inline{ display:none; align-items:center; gap:clamp(20px,2.6vw,38px); }
+  .nav-inline a{ font-family:var(--sans); font-size:0.68rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--bone-dim); transition:color .3s ease; }
+  .nav-inline a:hover{ color:var(--white-bright); }
+  .nav-inline a.nav-book{ color:#c4a35a; border:1px solid rgba(196,163,90,.5); padding:12px 24px; transition:border-color .3s ease,color .3s ease; }
+  .nav-inline a.nav-book:hover{ border-color:#c4a35a; color:#e0c878; }
+  @media (min-width:900px){ .nav-inline{ display:flex; } .menu-toggle{ display:none; } .brand-word{ letter-spacing:0.3em; } }
+
   .menu-toggle{
     display:flex; align-items:center; gap:10px;
     background:none; border:1px solid var(--hairline); color:var(--bone);
@@ -396,6 +405,7 @@
     <span class="brand-word">LOCKED IN</span>
   </a>
   <div class="nav-right">
+    <nav class="nav-inline" aria-label="Main"><a href="#services">Services</a><a href="#studios">Studios</a><a href="#plugins">Plugins</a><a href="#contact">Contact</a><a class="nav-book" href="#booking">Book</a></nav>
     <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="dropdown">
       <span>Menu</span>
       <span class="bars"><span></span><span></span><span></span></span>
