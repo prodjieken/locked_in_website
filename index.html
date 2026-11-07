@@ -967,6 +967,8 @@
 
   function goToSection(id){
     if(!validIds.includes(id)) return;
+    if(window.__navigated) document.documentElement.classList.add('revisit');
+    window.__navigated = true;
     pages.forEach(p => p.classList.toggle('active', p.id === id));
     window.scrollTo(0, 0);
     if(location.hash !== '#' + id){ history.replaceState(null, '', '#' + id); }
